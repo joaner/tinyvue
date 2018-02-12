@@ -12,7 +12,7 @@
   <!-- template -->
   <template id="template1">
     <button v-click="this.checked = !this.checked">trun <expression>this.checked ? 'off' : 'on' </expression></button>
-    <span v-show="this.checked">hello world!</span>
+    <span v-if="this.checked">hello world!</span>
   </template>
 
   <script>

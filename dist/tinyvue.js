@@ -85,14 +85,18 @@ TinyVueParse.prototype.parseNode = function(node) {
             case 'if':
               var result = self.execExpression(attribute.value)
               if (!result) {
-                node.parentNode.replaceChild(node, emptyNode)
+                if (node.parentNode) {
+                  node.parentNode.replaceChild(emptyNode, node)
+                }
               } else {
-                node.parentNode.replaceChild(emptyNode, node)
+                if (emptyNode.parentNode) {
+                  emptyNode.parentNode.replaceChild(node, emptyNode)
+                }
               }
               break
             case 'show':
               var result = self.execExpression(attribute.value)
-              node.style.display = result ? 'block' : 'none'
+              node.style.display = result ? null : 'none'
               break
             case 'click':
               node.addEventListener(directive, function() {
