@@ -32,7 +32,9 @@ new TinyVue({
 
 ## Reference
 
-### TinyVue `src/index.js`
+### TinyVue
+
+`src/index.js`
 
 入口，实例属性供其它类使用
 
@@ -41,7 +43,9 @@ new TinyVue({
 - `data` `Object` 属性
 - `template` `HTMLElement` DOM模板
 
-### TinyVueProxy `src/proxy.js`
+### TinyVueProxy
+
+`src/proxy.js`
 
 订阅管理类，负责订阅管理，在属性修改后触发回调
 
@@ -49,7 +53,9 @@ new TinyVue({
 - `currentDep` 表示该方法依赖于当前读取的属性，由此实现订阅
 - `deps` 用来管理属性的订阅列表
 
-### TinyVueParse `src/parse.js`
+### TinyVueParse
+
+`src/parse.js`
 
 解析模板中的表达式，并通过第一次执行表达式来建立订阅关系
 
