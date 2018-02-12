@@ -1,0 +1,20 @@
+{
+  "name": "tinyvue",
+  "version": "0.0.1",
+  "description": "a tiny mvvm framework like Vue.js",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "browserify src/index.js --standalone TinyVue --outfile dist/tinyvue.js",
+    "dev": "watchify src/index.js --standalone TinyVue --outfile dist/tinyvue.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaner/tinyvue.git"
+  },
+  "author": "joaner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joaner/tinyvue/issues"
+  },
+  "homepage": "https://github.com/joaner/tinyvue#readme"
+}
