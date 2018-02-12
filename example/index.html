@@ -6,15 +6,19 @@
   <script src="../dist/tinyvue.js"></script>
 </head>
 <body>
+  <!-- container -->
   <div id="app"></div>
-  <script type="template/tinyvue" id="template1">
-    <button v-on:click="checked = !checked">trun {{ checked ? 'off' : 'on' }}</button>
-    <span v-if="checked">hello world!</span>
-  </script>
+
+  <!-- template -->
+  <template id="template1">
+    <button v-click="this.checked = !this.checked">trun <expression>this.checked ? 'off' : 'on' </expression></button>
+    <span v-show="this.checked">hello world!</span>
+  </template>
+
   <script>
   new TinyVue({
     el: document.getElementById('app'),
-    template: document.getElementById('template1').textContent,
+    template: document.getElementById('template1').content,
     data: {
       checked: false,
     }
