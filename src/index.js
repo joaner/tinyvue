@@ -1,5 +1,5 @@
-var Proxy = require('./proxy')
-var Parse = require('./parse')
+var TinyVueProxy = require('./proxy')
+var TinyVueParse = require('./parse')
 
 /**
  * TinyVue class
@@ -12,13 +12,13 @@ var Parse = require('./parse')
 var TinyVue = function(options) {
   Object.assign(this, options)
 
-  this.proxy = new Proxy(this)
+  // 初始化数据的订阅管理
+  this.proxy = new TinyVueProxy(this)
   this.proxy.execute()
 
-  this.parse = new Parse(this)
+  // 解析模板并建立订阅关系
+  this.parse = new TinyVueParse(this)
   this.parse.execute()
-
-  window.t = this
 }
 
 module.exports = TinyVue
