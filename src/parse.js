@@ -6,16 +6,12 @@
  */
 var Parse = function(vue) {
   this.vue = vue
-
-  this.deps = {}
-  this.currentDep = null
 }
 
 Parse.prototype.execute = function() {
-  this.proxyData()
-
   this.parseNode(this.vue.template)
 
+  // reset render
   while (this.vue.el.firstChild) {
     this.vue.el.removeChild(this.vue.el.firstChild);
   }
@@ -25,44 +21,6 @@ Parse.prototype.execute = function() {
 Parse.prototype.execExpression = function(expression) {
   var method = new Function('return ' + expression)
   return method.call(this.vue.data)
-}
-
-Parse.prototype.proxyData = function() {
-  var self = this
-
-  for (name in this.vue.data) {
-    this.proxy(this.vue.data, name)
-  }
-}
-
-Parse.prototype.proxy = function(data, name) {
-  var self = this
-  var value = data[name]
-
-  Object.defineProperty(data, name, {
-    get: function() {
-      if (self.currentDep) {
-        if (!self.deps[name]) {
-          self.deps[name] = []
-        }
-        self.deps[name].push(self.currentDep)
-      }
-      return value
-    },
-
-    set: function(newValue) {
-      var oldValue = value
-
-      value = newValue
-
-      if (self.deps[name]) {
-        for(var i = 0; i < self.deps[name].length; i++) {
-          var callback = self.deps[name][i]
-          callback.call(self.vue, value, oldValue)
-        }
-      }
-    },
-  })
 }
 
 Parse.prototype.parseNode = function(node) {
@@ -75,7 +33,7 @@ Parse.prototype.parseNode = function(node) {
         var directive = attribute.name.slice(2)
 
         var emptyNode = new Comment()
-        this.currentDep = (function(directive, attribute, emptyNode) {
+        self.vue.proxy.currentDep = (function(directive, attribute, emptyNode) {
           return function() {
             switch (directive) {
               case 'if':
@@ -99,9 +57,9 @@ Parse.prototype.parseNode = function(node) {
           }
         })(directive, attribute, emptyNode);
 
-        this.currentDep()
+        self.vue.proxy.currentDep()
 
-        self.currentDep = null
+        self.vue.proxy.currentDep = null
       }
     }
   }
@@ -112,13 +70,13 @@ Parse.prototype.parseNode = function(node) {
 
       if (childNode.nodeType === Node.ELEMENT_NODE) {
         if (childNode.nodeName === 'EXPRESSION') {
-          this.currentDep = (function(expression, childNode) {
+          self.vue.proxy.currentDep = (function(expression, childNode) {
             return function() {
               childNode.textContent = self.execExpression(expression)
             }
           })(childNode.textContent, childNode)
 
-          this.currentDep()
+          self.vue.proxy.currentDep()
         } else {
           this.parseNode(childNode)
         }
