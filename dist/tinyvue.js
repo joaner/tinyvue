@@ -119,37 +119,45 @@ TinyVueParse.prototype.parseAttribute = function(attribute, node) {
   // 指令名
   var directive = attribute.name.slice(2)
 
-  // v-if里要替换的emptyNode
-  var emptyNode = new Comment()
+  var currentDep
+
+  switch (directive) {
+    case 'if':
+      // v-if里要替换的emptyNode
+      var emptyNode = new Comment()
+      currentDep = function() {
+        var result = self.execExpression(attribute.value)
+        if (!result) {
+          if (node.parentNode) {
+            node.parentNode.replaceChild(emptyNode, node)
+          }
+        } else {
+          if (emptyNode.parentNode) {
+            emptyNode.parentNode.replaceChild(node, emptyNode)
+          }
+        }
+      }
+      break
+    case 'show':
+      currentDep = function() {
+        var result = self.execExpression(attribute.value)
+        node.style.display = result ? null : 'none'
+      }
+      break
+    case 'click':
+      currentDep = function() {
+        node.addEventListener(directive, function() {
+          self.execExpression(attribute.value)
+        })
+      }
+      break
+    default:
+      // unsupport directive
+      return
+  }
 
   // 每次属性变化，都要执行的订阅方法
-  self.vue.proxy.currentDep = (function(emptyNode) {
-    return function() {
-      switch (directive) {
-        case 'if':
-          var result = self.execExpression(attribute.value)
-          if (!result) {
-            if (node.parentNode) {
-              node.parentNode.replaceChild(emptyNode, node)
-            }
-          } else {
-            if (emptyNode.parentNode) {
-              emptyNode.parentNode.replaceChild(node, emptyNode)
-            }
-          }
-          break
-        case 'show':
-          var result = self.execExpression(attribute.value)
-          node.style.display = result ? null : 'none'
-          break
-        case 'click':
-          node.addEventListener(directive, function() {
-            self.execExpression(attribute.value)
-          })
-          break
-      }
-    }
-  })(emptyNode);
+  self.vue.proxy.currentDep = currentDep
 
   // 初始执行一次表达式，通过读取属性，来建立订阅关系
   // 参见 proxy.js 的 Object,defineProperty get方法
