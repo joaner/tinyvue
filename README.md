@@ -16,6 +16,7 @@ a tiny MVVM framework like Vue.js
     trun <expression>this.checked ? 'off' : 'on' </expression>
   </button>
   <span v-show="this.checked">hello world!</span>
+  <p>you opened it <expression>this.openedCount</expression> times.</p>
 </template>
 
 <script src="/dist/tinyvue.js"></script>
@@ -25,7 +26,17 @@ new TinyVue({
   template: document.getElementById('template1').content,
   data: {
     checked: false,
-  }
+  },
+  watch: {
+    checked: function(newVal, oldValue) {
+      this.data.count++
+    },
+  },
+  computed: {
+    openedCount: function() {
+      return Math.ceil(this.data.count / 2)
+    },
+  },
 })
 </script>
 ```
@@ -42,6 +53,8 @@ new TinyVue({
 - `el` `HTMLElement` 容器
 - `data` `Object` 属性
 - `template` `HTMLElement` DOM模板
+- `watch` `Object{String: Function}` 额外监听的属性，对应回调方法
+- `computed` `Object{String: Function}` 计算属性，不可写
 
 ### TinyVueProxy
 
