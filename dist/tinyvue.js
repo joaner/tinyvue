@@ -194,6 +194,10 @@ TinyVueProxy.prototype.execute = function() {
   for (name in this.vue.watch) {
     this.watch(name, this.vue.watch[name])
   }
+
+  for (name in this.vue.computed) {
+    this.proxyComputed(name, this.vue.computed[name])
+  }
 }
 
 /**
@@ -239,6 +243,26 @@ TinyVueProxy.prototype.proxy = function(name) {
     },
   })
 }
+
+/**
+ * 初始化计算属性的订阅方法
+ * @param {string} name - 属性名
+ *
+ */
+TinyVueProxy.prototype.proxyComputed = function(name, computed) {
+  var self = this
+
+  Object.defineProperty(this.data, name, {
+    get: function() {
+      if (self.currentDep) {
+        self.watch(name, self.currentDep)
+      }
+      return computed.call(self.vue)
+    },
+    writeable: false
+  })
+}
+
 
 module.exports = TinyVueProxy
 
