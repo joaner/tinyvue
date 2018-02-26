@@ -21,7 +21,13 @@
     template: document.getElementById('template1').content,
     data: {
       checked: false,
-    }
+      count: 0,
+    },
+    watch: {
+      checked: function(newVal, oldValue) {
+        this.data.count++
+      },
+    },
   })
   </script>
 </body>

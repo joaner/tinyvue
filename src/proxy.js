@@ -18,6 +18,10 @@ TinyVueProxy.prototype.execute = function() {
   for (name in this.data) {
     this.proxy(name)
   }
+
+  for (name in this.vue.watch) {
+    this.watch(name, this.vue.watch[name])
+  }
 }
 
 /**
