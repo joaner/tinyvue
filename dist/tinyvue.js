@@ -52,10 +52,10 @@ TinyVueParse.prototype.execute = function() {
 
 /**
  * 执行表达式
- * TODO 还不支持多行表达式
  */
 TinyVueParse.prototype.execExpression = function(expression) {
-  var method = new Function('return ' + expression)
+  var eval = expression.replace(/'/g, '\\\'')
+  var method = new Function(`return eval('${eval}')`)
   return method.call(this.vue.data)
 }
 
